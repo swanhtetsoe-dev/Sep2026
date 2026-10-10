@@ -1,0 +1,84 @@
+﻿using Sep2026.Assignment1;
+
+Start:
+
+Console.WriteLine("\n============================");
+Console.WriteLine("     Wallet Shop System     ");
+Console.WriteLine("============================");
+Console.WriteLine("1. Add Wallet");
+Console.WriteLine("2. Sell Wallet");
+Console.WriteLine("3. View Sales Report");
+Console.WriteLine("4. Show All Wallets");
+Console.WriteLine("5. Exit");
+Console.Write("Please select an option: ");
+string option = Console.ReadLine() ?? "";
+
+switch (option)
+{
+    case "1":
+        Console.Write("Enter wallet name: ");
+        string name = Console.ReadLine() ?? "";
+
+        Console.Write("Enter brand: ");
+        string brand = Console.ReadLine() ?? "";
+
+        Console.WriteLine("Select gender:");
+        Console.WriteLine("  1 = Men");
+        Console.WriteLine("  2 = Women");
+        Console.WriteLine("  3 = Unisex");
+        Console.Write("Enter choice: ");
+        string genderInput = Console.ReadLine() ?? "3";
+        GenderType gender = genderInput switch
+        {
+            "1" => GenderType.Men,
+            "2" => GenderType.Women,
+            _   => GenderType.Unisex
+        };
+
+        Console.Write("Enter color: ");
+        string color = Console.ReadLine() ?? "";
+
+        Console.Write("Enter price: ");
+        decimal price = decimal.Parse(Console.ReadLine() ?? "0");
+
+        Console.Write("Enter stock quantity: ");
+        int stockQty = int.Parse(Console.ReadLine() ?? "0");
+
+        WalletService walletService = new WalletService();
+        walletService.AddWallet(name, brand, gender, color, price, stockQty);
+        walletService.ShowWallets();
+        break;
+
+    case "2":
+        Console.Write("Enter wallet name or product code (e.g. WAL-001): ");
+        string nameOrCode = Console.ReadLine() ?? "";
+
+        Console.Write("Enter quantity to sell: ");
+        int qty = int.Parse(Console.ReadLine() ?? "0");
+
+        SaleService saleService = new SaleService();
+        saleService.SellWallet(nameOrCode, qty);
+        break;
+
+    case "3":
+        SaleService reportService = new SaleService();
+        reportService.ShowSalesReport();
+        break;
+
+    case "4":
+        WalletService listService = new WalletService();
+        listService.ShowWallets();
+        break;
+
+    case "5":
+        goto End;
+
+    default:
+        Console.WriteLine("Invalid option. Please try again.");
+        break;
+}
+
+goto Start;
+
+End:
+Console.WriteLine("Thank you for using Wallet Shop. Goodbye!");
