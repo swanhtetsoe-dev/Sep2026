@@ -1,5 +1,8 @@
 ﻿using Sep2026.Assignment1;
 
+WalletService walletService = new WalletService();
+SaleService saleService = new SaleService(walletService);
+
 Start:
 
 Console.WriteLine("\n============================");
@@ -44,7 +47,6 @@ switch (option)
         Console.Write("Enter stock quantity: ");
         int stockQty = int.Parse(Console.ReadLine() ?? "0");
 
-        WalletService walletService = new WalletService();
         walletService.AddWallet(name, brand, gender, color, price, stockQty);
         walletService.ShowWallets();
         break;
@@ -56,18 +58,15 @@ switch (option)
         Console.Write("Enter quantity to sell: ");
         int qty = int.Parse(Console.ReadLine() ?? "0");
 
-        SaleService saleService = new SaleService();
         saleService.SellWallet(nameOrCode, qty);
         break;
 
     case "3":
-        SaleService reportService = new SaleService();
-        reportService.ShowSalesReport();
+        saleService.ShowSalesReport();
         break;
 
     case "4":
-        WalletService listService = new WalletService();
-        listService.ShowWallets();
+        walletService.ShowWallets();
         break;
 
     case "5":

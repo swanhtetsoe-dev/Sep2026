@@ -8,10 +8,16 @@ namespace Sep2026.Assignment1
     {
         public static List<SaleDto> Sales = new List<SaleDto>();
 
+        private readonly WalletService _walletService;
+
+        public SaleService(WalletService walletService)
+        {
+            _walletService = walletService;
+        }
+
         public void SellWallet(string nameOrCode, int qty)
         {
-            WalletService walletService = new WalletService();
-            WalletDto? wallet = walletService.FindWallet(nameOrCode);
+            WalletDto? wallet = _walletService.FindWallet(nameOrCode);
 
             if (wallet == null)
             {
