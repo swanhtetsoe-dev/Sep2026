@@ -32,7 +32,7 @@ namespace Sep2026.Assignment1
         {
             int maxId = Wallets.Count == 0 ? 0 : Wallets.Max(x => x.Id);
             int newId = maxId + 1;
-            string productCode = $"WAL-{newId:D3}";
+            string productCode = $"WAL-{newId:D4}";
 
             WalletDto wallet = new WalletDto
             {
