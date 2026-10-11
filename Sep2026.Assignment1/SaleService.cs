@@ -17,14 +17,10 @@ namespace Sep2026.Assignment1
 
         public void SellWallet(WalletDto wallet, int qty)
         {
-            if (wallet.StockQuantity <= 0 || wallet.StockQuantity < qty)
-            {
-                Console.WriteLine($"Out of stock or insufficient stock. Available stock: {wallet.StockQuantity}");
+            if (!_walletService.DeductStock(wallet, qty))
                 return;
-            }
 
-            wallet.StockQuantity -= qty;
-            decimal totalAmount = wallet.Price * qty;
+            decimal totalAmount = wallet.CalculateTotalAmount(qty);
 
             int maxSaleId = Sales.Count == 0 ? 0 : Sales.Max(x => x.SaleId);
             SaleDto sale = new SaleDto
@@ -53,12 +49,14 @@ namespace Sep2026.Assignment1
             Console.WriteLine("\n========== Sales Report ==========");
             foreach (var sale in Sales)
             {
-                Console.WriteLine($"Sale ID : {sale.SaleId}");
-                Console.WriteLine($"  Product : [{sale.ProductCode}] {sale.WalletName}");
-                Console.WriteLine($"  Qty Sold : {sale.SoldQty}");
-                Console.WriteLine($"  Amount   : {sale.TotalAmount.ToCurrency()}");
-                Console.WriteLine($"  Date     : {sale.SaleDate:yyyy-MM-dd HH:mm}");
-                Console.WriteLine($"  ----------------------------------");
+                Console.WriteLine($"""
+                    Sale ID : {sale.SaleId}
+                      Product  : [{sale.ProductCode}] {sale.WalletName}
+                      Qty Sold : {sale.SoldQty}
+                      Amount   : {sale.TotalAmount.ToCurrency()}
+                      Date     : {sale.SaleDate:yyyy-MM-dd HH:mm}
+                      ----------------------------------
+                    """);
             }
 
             decimal grandTotal = Sales.Sum(x => x.TotalAmount);

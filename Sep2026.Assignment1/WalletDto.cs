@@ -10,5 +10,7 @@
         public string Color { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public int StockQuantity { get; set; }
+
+        public decimal CalculateTotalAmount(int qty) => Price * qty;
     }
 }

@@ -57,6 +57,17 @@ namespace Sep2026.Assignment1
                 x.Name.Contains(nameOrCode, StringComparison.OrdinalIgnoreCase));
         }
 
+        public bool DeductStock(WalletDto wallet, int qty)
+        {
+            if (wallet.StockQuantity <= 0 || wallet.StockQuantity < qty)
+            {
+                Console.WriteLine($"Out of stock or insufficient stock. Available stock: {wallet.StockQuantity}");
+                return false;
+            }
+            wallet.StockQuantity -= qty;
+            return true;
+        }
+
         public void ShowWallets()
         {
             if (Wallets.Count == 0)
