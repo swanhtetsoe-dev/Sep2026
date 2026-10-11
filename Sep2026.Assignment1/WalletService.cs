@@ -53,8 +53,8 @@ namespace Sep2026.Assignment1
         public WalletDto? FindWallet(string nameOrCode)
         {
             return Wallets.FirstOrDefault(x =>
-                x.ProductCode.Equals(nameOrCode, StringComparison.OrdinalIgnoreCase) ||
-                x.Name.Equals(nameOrCode, StringComparison.OrdinalIgnoreCase));
+                x.ProductCode.Contains(nameOrCode, StringComparison.OrdinalIgnoreCase) ||
+                x.Name.Contains(nameOrCode, StringComparison.OrdinalIgnoreCase));
         }
 
         public void ShowWallets()

@@ -15,16 +15,8 @@ namespace Sep2026.Assignment1
             _walletService = walletService;
         }
 
-        public void SellWallet(string nameOrCode, int qty)
+        public void SellWallet(WalletDto wallet, int qty)
         {
-            WalletDto? wallet = _walletService.FindWallet(nameOrCode);
-
-            if (wallet == null)
-            {
-                Console.WriteLine("Wallet not found. Please check the name or product code.");
-                return;
-            }
-
             if (wallet.StockQuantity <= 0 || wallet.StockQuantity < qty)
             {
                 Console.WriteLine($"Out of stock or insufficient stock. Available stock: {wallet.StockQuantity}");

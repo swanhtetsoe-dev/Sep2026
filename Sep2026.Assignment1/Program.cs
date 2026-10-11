@@ -56,10 +56,19 @@ switch (option)
         Console.Write("Enter wallet name or product code (e.g. WAL-001): ");
         string nameOrCode = Console.ReadLine() ?? "";
 
+        WalletDto? found = walletService.FindWallet(nameOrCode);
+        if (found == null)
+        {
+            Console.WriteLine("Wallet not found. Please check the name or product code.");
+            break;
+        }
+
+        Console.WriteLine($"Product: [{found.ProductCode}] {found.Name} | Brand: {found.Brand} | Color: {found.Color} | Price: {found.Price:C} | Stock: {found.StockQuantity}");
+
         Console.Write("Enter quantity to sell: ");
         int qty = int.Parse(Console.ReadLine() ?? "0");
 
-        saleService.SellWallet(nameOrCode, qty);
+        saleService.SellWallet(found, qty);
         break;
 
     case "3":
