@@ -5,14 +5,15 @@ SaleService saleService = new SaleService(walletService);
 
 Start:
 
-Console.WriteLine("\n============================");
-Console.WriteLine("     Wallet Shop System     ");
-Console.WriteLine("============================");
-Console.WriteLine("1. Add Wallet");
-Console.WriteLine("2. Sell Wallet");
-Console.WriteLine("3. View Sales Report");
-Console.WriteLine("4. Show All Wallets");
-Console.WriteLine("5. Exit");
+Console.WriteLine(@"
+============================
+     Wallet Shop System     
+============================
+1. Add Wallet
+2. Sell Wallet
+3. View Sales Report
+4. Show All Wallets
+5. Exit");
 Console.Write("Please select an option: ");
 string option = Console.ReadLine() ?? "";
 
@@ -25,10 +26,10 @@ switch (option)
         Console.Write("Enter brand: ");
         string brand = Console.ReadLine() ?? "";
 
-        Console.WriteLine("Select gender:");
-        Console.WriteLine("  1 = Men");
-        Console.WriteLine("  2 = Women");
-        Console.WriteLine("  3 = Unisex");
+        Console.WriteLine(@"Select gender:
+  1 = Men
+  2 = Women
+  3 = Unisex");
         Console.Write("Enter choice: ");
         string genderInput = Console.ReadLine() ?? "3";
         GenderType gender = genderInput switch
