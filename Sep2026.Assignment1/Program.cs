@@ -17,9 +17,15 @@ Console.WriteLine(@"
 Console.Write("Please select an option: ");
 string option = Console.ReadLine() ?? "";
 
-switch (option)
+if (!Enum.TryParse(option, out MenuOption menuOption))
 {
-    case "1":
+    Console.WriteLine("Invalid option. Please try again.");
+    goto Start;
+}
+
+switch (menuOption)
+{
+    case MenuOption.AddWallet:
         Console.Write("Enter wallet name: ");
         string name = Console.ReadLine() ?? "";
 
@@ -31,13 +37,11 @@ switch (option)
   2 = Women
   3 = Unisex");
         Console.Write("Enter choice: ");
-        string genderInput = Console.ReadLine() ?? "3";
-        GenderType gender = genderInput switch
-        {
-            "1" => GenderType.Men,
-            "2" => GenderType.Women,
-            _   => GenderType.Unisex
-        };
+        string genderInput = Console.ReadLine() ?? ((int)GenderType.Unisex).ToString();
+
+        GenderType gender = Enum.TryParse(genderInput, out GenderType g)
+            ? g
+            : GenderType.Unisex;
 
         Console.Write("Enter color: ");
         string color = Console.ReadLine() ?? "";
@@ -52,7 +56,7 @@ switch (option)
         walletService.ShowWallets();
         break;
 
-    case "2":
+    case MenuOption.SellWallet:
         Console.Write("Enter wallet name or product code (e.g. WAL-001): ");
         string nameOrCode = Console.ReadLine() ?? "";
 
@@ -71,20 +75,16 @@ switch (option)
         saleService.SellWallet(found, qty);
         break;
 
-    case "3":
+    case MenuOption.SalesReport:
         saleService.ShowSalesReport();
         break;
 
-    case "4":
+    case MenuOption.ShowWallets:
         walletService.ShowWallets();
         break;
 
-    case "5":
+    case MenuOption.Exit:
         goto End;
-
-    default:
-        Console.WriteLine("Invalid option. Please try again.");
-        break;
 }
 
 goto Start;
