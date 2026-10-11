@@ -63,7 +63,7 @@ switch (option)
             break;
         }
 
-        Console.WriteLine($"Product: [{found.ProductCode}] {found.Name} | Brand: {found.Brand} | Color: {found.Color} | Price: {found.Price:C} | Stock: {found.StockQuantity}");
+        Console.WriteLine($"Product: [{found.ProductCode}] {found.Name} | Brand: {found.Brand} | Color: {found.Color} | Price: {found.Price.ToCurrency()} | Stock: {found.StockQuantity}");
 
         Console.Write("Enter quantity to sell: ");
         int qty = int.Parse(Console.ReadLine() ?? "0");

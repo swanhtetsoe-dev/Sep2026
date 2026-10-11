@@ -67,7 +67,7 @@ namespace Sep2026.Assignment1
             Console.WriteLine("\n--- Wallet List ---");
             foreach (var item in Wallets)
             {
-                Console.WriteLine($"[{item.ProductCode}] {item.Name} | Brand: {item.Brand} | Gender: {item.Gender} | Color: {item.Color} | Price: {item.Price:C} | Stock: {item.StockQuantity}");
+                Console.WriteLine($"[{item.ProductCode}] {item.Name} | Brand: {item.Brand} | Gender: {item.Gender} | Color: {item.Color} | Price: {item.Price.ToCurrency()} | Stock: {item.StockQuantity}");
             }
             Console.WriteLine("-------------------");
         }

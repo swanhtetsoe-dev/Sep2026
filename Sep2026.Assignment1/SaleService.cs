@@ -39,7 +39,7 @@ namespace Sep2026.Assignment1
             };
             Sales.Add(sale);
 
-            Console.WriteLine($"Sale successful! {qty} x {wallet.Name} ({wallet.ProductCode}) = {totalAmount:C}. Remaining stock: {wallet.StockQuantity}");
+            Console.WriteLine($"Sale successful! {qty} x {wallet.Name} ({wallet.ProductCode}) = {totalAmount.ToCurrency()}. Remaining stock: {wallet.StockQuantity}");
         }
 
         public void ShowSalesReport()
@@ -56,13 +56,13 @@ namespace Sep2026.Assignment1
                 Console.WriteLine($"Sale ID : {sale.SaleId}");
                 Console.WriteLine($"  Product : [{sale.ProductCode}] {sale.WalletName}");
                 Console.WriteLine($"  Qty Sold : {sale.SoldQty}");
-                Console.WriteLine($"  Amount   : {sale.TotalAmount:C}");
+                Console.WriteLine($"  Amount   : {sale.TotalAmount.ToCurrency()}");
                 Console.WriteLine($"  Date     : {sale.SaleDate:yyyy-MM-dd HH:mm}");
                 Console.WriteLine($"  ----------------------------------");
             }
 
             decimal grandTotal = Sales.Sum(x => x.TotalAmount);
-            Console.WriteLine($"  Grand Total Sales : {grandTotal:C}");
+            Console.WriteLine($"  Grand Total Sales : {grandTotal.ToCurrency()}");
             Console.WriteLine("==================================");
         }
     }
