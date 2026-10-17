@@ -19,7 +19,8 @@ namespace Sep2026.WalletShop
 
             decimal totalAmount = wallet.CalculateTotalAmount(qty);
 
-            using (var conn = DbHelper.GetOpenConnection())
+            var conn = DbHelper.GetOpenConnection();
+            try
             {
                 SqlCommand cmd = new SqlCommand(
                     @"INSERT INTO [dbo].[Sales]
@@ -35,16 +36,25 @@ namespace Sep2026.WalletShop
                 cmd.Parameters.AddWithValue("@SaleDate",    DateTime.Now);
 
                 cmd.ExecuteNonQuery();
-            }
 
-            Console.WriteLine(
-                $"Sale successful! {qty} x {wallet.Name} ({wallet.ProductCode}) = " +
-                $"{totalAmount.ToCurrency()}. Remaining stock: {wallet.StockQuantity}");
+                Console.WriteLine(
+                    $"Sale successful! {qty} x {wallet.Name} ({wallet.ProductCode}) = " +
+                    $"{totalAmount.ToCurrency()}. Remaining stock: {wallet.StockQuantity}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
 
         public void ShowSalesReport()
         {
-            using (var conn = DbHelper.GetOpenConnection())
+            var conn = DbHelper.GetOpenConnection();
+            try
             {
                 SqlCommand cmd = new SqlCommand(
                     @"SELECT [SaleId],[WalletId],[ProductCode],[WalletName],
@@ -88,6 +98,14 @@ namespace Sep2026.WalletShop
 
                 Console.WriteLine($"  Grand Total Sales : {grandTotal.ToCurrency()}");
                 Console.WriteLine("==================================");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            finally
+            {
+                conn.Close();
             }
         }
     }
