@@ -53,6 +53,7 @@ namespace Sep2026.WalletShop
 
         public void ShowSalesReport()
         {
+            DataTable dt = new DataTable();
             var conn = DbHelper.GetOpenConnection();
             try
             {
@@ -63,41 +64,7 @@ namespace Sep2026.WalletShop
                       ORDER BY [SaleId]", conn);
 
                 SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
                 adapter.Fill(dt);
-
-                if (dt.Rows.Count == 0)
-                {
-                    Console.WriteLine("No sales records found.");
-                    return;
-                }
-
-                Console.WriteLine("\n========== Sales Report ==========");
-
-                decimal grandTotal = 0m;
-                foreach (DataRow row in dt.Rows)
-                {
-                    int      saleId      = Convert.ToInt32(row["SaleId"]);
-                    string   productCode = row["ProductCode"].ToString()!;
-                    string   walletName  = row["WalletName"].ToString()!;
-                    int      soldQty     = Convert.ToInt32(row["SoldQty"]);
-                    decimal  totalAmount = Convert.ToDecimal(row["TotalAmount"]);
-                    DateTime saleDate    = Convert.ToDateTime(row["SaleDate"]);
-
-                    grandTotal += totalAmount;
-
-                    Console.WriteLine($"""
-                        Sale ID : {saleId}
-                          Product  : [{productCode}] {walletName}
-                          Qty Sold : {soldQty}
-                          Amount   : {totalAmount.ToCurrency()}
-                          Date     : {saleDate:yyyy-MM-dd HH:mm}
-                          ----------------------------------
-                        """);
-                }
-
-                Console.WriteLine($"  Grand Total Sales : {grandTotal.ToCurrency()}");
-                Console.WriteLine("==================================");
             }
             catch (Exception ex)
             {
@@ -107,6 +74,39 @@ namespace Sep2026.WalletShop
             {
                 conn.Close();
             }
+
+            if (dt.Rows.Count == 0)
+            {
+                Console.WriteLine("No sales records found.");
+                return;
+            }
+
+            Console.WriteLine("\n========== Sales Report ==========");
+
+            decimal grandTotal = 0m;
+            foreach (DataRow row in dt.Rows)
+            {
+                int      saleId      = Convert.ToInt32(row["SaleId"]);
+                string   productCode = row["ProductCode"].ToString()!;
+                string   walletName  = row["WalletName"].ToString()!;
+                int      soldQty     = Convert.ToInt32(row["SoldQty"]);
+                decimal  totalAmount = Convert.ToDecimal(row["TotalAmount"]);
+                DateTime saleDate    = Convert.ToDateTime(row["SaleDate"]);
+
+                grandTotal += totalAmount;
+
+                Console.WriteLine($"""
+                    Sale ID : {saleId}
+                      Product  : [{productCode}] {walletName}
+                      Qty Sold : {soldQty}
+                      Amount   : {totalAmount.ToCurrency()}
+                      Date     : {saleDate:yyyy-MM-dd HH:mm}
+                      ----------------------------------
+                    """);
+            }
+
+            Console.WriteLine($"  Grand Total Sales : {grandTotal.ToCurrency()}");
+            Console.WriteLine("==================================");
         }
     }
 }

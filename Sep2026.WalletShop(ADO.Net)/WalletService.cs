@@ -9,6 +9,7 @@ namespace Sep2026.WalletShop
         {
             List<WalletDto> wallets = new List<WalletDto>();
 
+            DataTable dt = new DataTable();
             var conn = DbHelper.GetOpenConnection();
             try
             {
@@ -18,13 +19,7 @@ namespace Sep2026.WalletShop
                       WHERE [IsDeleted] = 0", conn);
 
                 SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
                 adapter.Fill(dt);
-
-                foreach (DataRow row in dt.Rows)
-                {
-                    wallets.Add(MapRow(row));
-                }
             }
             catch (Exception ex)
             {
@@ -33,6 +28,11 @@ namespace Sep2026.WalletShop
             finally
             {
                 conn.Close();
+            }
+
+            foreach (DataRow row in dt.Rows)
+            {
+                wallets.Add(MapRow(row));
             }
 
             return wallets;
