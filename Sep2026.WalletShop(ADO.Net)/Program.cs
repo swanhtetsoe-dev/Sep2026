@@ -92,7 +92,15 @@ void HandleAddWallet()
     Console.Write("Enter stock quantity: ");
     int stockQty = int.Parse(Console.ReadLine() ?? "0");
 
-    walletService.AddWallet(name, brand, gender, color, price, stockQty);
+    walletService.AddWallet(new WalletCreateDto
+    {
+        Name = name,
+        Brand = brand,
+        Gender = gender,
+        Color = color,
+        Price = price,
+        StockQuantity = stockQty
+    });
 }
 
 void HandleSellWallet()
@@ -161,7 +169,16 @@ void HandleEditWallet()
     input = Console.ReadLine() ?? "";
     int stockQty = input.Length > 0 ? int.Parse(input) : found.StockQuantity;
 
-    walletService.EditWallet(found.Id, name, brand, gender, color, price, stockQty);
+    walletService.EditWallet(new WalletEditDto
+    {
+        Id            = found.Id,
+        Name          = name,
+        Brand         = brand,
+        Gender        = gender,
+        Color         = color,
+        Price         = price,
+        StockQuantity = stockQty
+    });
 }
 
 void HandleDeleteWallet()

@@ -13,10 +13,12 @@ namespace Sep2026.WalletShop
             var conn = DbHelper.GetOpenConnection();
             try
             {
-                SqlCommand cmd = new SqlCommand(
-                    @"SELECT [Id],[ProductCode],[Name],[Brand],[Gender],[Color],[Price],[StockQuantity],[IsDeleted]
-                      FROM [dbo].[Wallets]
-                      WHERE [IsDeleted] = 0", conn);
+                string selectSql = @"
+                    SELECT [Id],[ProductCode],[Name],[Brand],[Gender],[Color],[Price],[StockQuantity],[IsDeleted]
+                    FROM [dbo].[Wallets]
+                    WHERE [IsDeleted] = 0";
+
+                SqlCommand cmd = new SqlCommand(selectSql, conn);
 
                 SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                 adapter.Fill(dt);
@@ -38,8 +40,7 @@ namespace Sep2026.WalletShop
             return wallets;
         }
 
-        public void AddWallet(string name, string brand, GenderType gender,
-                              string color, decimal price, int stockQty)
+        public void AddWallet(WalletCreateDto wallet)
         {
             var conn = DbHelper.GetOpenConnection();
             try
@@ -50,19 +51,21 @@ namespace Sep2026.WalletShop
 
                 string productCode = $"WAL-{newId:D4}";
 
-                SqlCommand cmd = new SqlCommand(
-                    @"INSERT INTO [dbo].[Wallets]
+                string insertSql = @"
+                    INSERT INTO [dbo].[Wallets]
                         ([ProductCode],[Name],[Brand],[Gender],[Color],[Price],[StockQuantity],[IsDeleted])
-                      VALUES
-                        (@ProductCode,@Name,@Brand,@Gender,@Color,@Price,@StockQuantity,0)", conn);
+                    VALUES
+                        (@ProductCode,@Name,@Brand,@Gender,@Color,@Price,@StockQuantity,0)";
+
+                SqlCommand cmd = new SqlCommand(insertSql, conn);
 
                 cmd.Parameters.AddWithValue("@ProductCode",   productCode);
-                cmd.Parameters.AddWithValue("@Name",          name);
-                cmd.Parameters.AddWithValue("@Brand",         brand);
-                cmd.Parameters.AddWithValue("@Gender",        (byte)gender);
-                cmd.Parameters.AddWithValue("@Color",         color);
-                cmd.Parameters.AddWithValue("@Price",         price);
-                cmd.Parameters.AddWithValue("@StockQuantity", stockQty);
+                cmd.Parameters.AddWithValue("@Name",          wallet.Name);
+                cmd.Parameters.AddWithValue("@Brand",         wallet.Brand);
+                cmd.Parameters.AddWithValue("@Gender",        (byte)wallet.Gender);
+                cmd.Parameters.AddWithValue("@Color",         wallet.Color);
+                cmd.Parameters.AddWithValue("@Price",         wallet.Price);
+                cmd.Parameters.AddWithValue("@StockQuantity", wallet.StockQuantity);
 
                 cmd.ExecuteNonQuery();
 
@@ -83,12 +86,14 @@ namespace Sep2026.WalletShop
             var conn = DbHelper.GetOpenConnection();
             try
             {
-                SqlCommand cmd = new SqlCommand(
-                    @"SELECT TOP 1
+                string searchSql = @"
+                    SELECT TOP 1
                         [Id],[ProductCode],[Name],[Brand],[Gender],[Color],[Price],[StockQuantity],[IsDeleted]
-                      FROM [dbo].[Wallets]
-                      WHERE [IsDeleted] = 0
-                        AND ([ProductCode] LIKE @Search OR [Name] LIKE @Search)", conn);
+                    FROM [dbo].[Wallets]
+                    WHERE [IsDeleted] = 0
+                        AND ([ProductCode] LIKE @Search OR [Name] LIKE @Search)";
+
+                SqlCommand cmd = new SqlCommand(searchSql, conn);
 
                 cmd.Parameters.AddWithValue("@Search", $"%{nameOrCode}%");
 
@@ -112,29 +117,30 @@ namespace Sep2026.WalletShop
             }
         }
 
-        public void EditWallet(int id, string name, string brand, GenderType gender,
-                               string color, decimal price, int stockQty)
+        public void EditWallet(WalletEditDto wallet)
         {
             var conn = DbHelper.GetOpenConnection();
             try
             {
-                SqlCommand cmd = new SqlCommand(
-                    @"UPDATE [dbo].[Wallets]
-                      SET [Name]          = @Name,
-                          [Brand]         = @Brand,
-                          [Gender]        = @Gender,
-                          [Color]         = @Color,
-                          [Price]         = @Price,
-                          [StockQuantity] = @StockQuantity
-                      WHERE [Id] = @Id AND [IsDeleted] = 0", conn);
+                string updateSql = @"
+                    UPDATE [dbo].[Wallets]
+                    SET [Name]          = @Name,
+                        [Brand]         = @Brand,
+                        [Gender]        = @Gender,
+                        [Color]         = @Color,
+                        [Price]         = @Price,
+                        [StockQuantity] = @StockQuantity
+                    WHERE [Id] = @Id AND [IsDeleted] = 0";
 
-                cmd.Parameters.AddWithValue("@Name",          name);
-                cmd.Parameters.AddWithValue("@Brand",         brand);
-                cmd.Parameters.AddWithValue("@Gender",        (byte)gender);
-                cmd.Parameters.AddWithValue("@Color",         color);
-                cmd.Parameters.AddWithValue("@Price",         price);
-                cmd.Parameters.AddWithValue("@StockQuantity", stockQty);
-                cmd.Parameters.AddWithValue("@Id",            id);
+                SqlCommand cmd = new SqlCommand(updateSql, conn);
+
+                cmd.Parameters.AddWithValue("@Name",          wallet.Name);
+                cmd.Parameters.AddWithValue("@Brand",         wallet.Brand);
+                cmd.Parameters.AddWithValue("@Gender",        (byte)wallet.Gender);
+                cmd.Parameters.AddWithValue("@Color",         wallet.Color);
+                cmd.Parameters.AddWithValue("@Price",         wallet.Price);
+                cmd.Parameters.AddWithValue("@StockQuantity", wallet.StockQuantity);
+                cmd.Parameters.AddWithValue("@Id",            wallet.Id);
 
                 cmd.ExecuteNonQuery();
 
@@ -155,10 +161,12 @@ namespace Sep2026.WalletShop
             var conn = DbHelper.GetOpenConnection();
             try
             {
-                SqlCommand cmd = new SqlCommand(
-                    @"UPDATE [dbo].[Wallets]
-                      SET [IsDeleted] = 1
-                      WHERE [Id] = @Id", conn);
+                string deleteSql = @"
+                    UPDATE [dbo].[Wallets]
+                    SET [IsDeleted] = 1
+                    WHERE [Id] = @Id";
+
+                SqlCommand cmd = new SqlCommand(deleteSql, conn);
 
                 cmd.Parameters.AddWithValue("@Id", id);
 
@@ -188,10 +196,12 @@ namespace Sep2026.WalletShop
             var conn = DbHelper.GetOpenConnection();
             try
             {
-                SqlCommand cmd = new SqlCommand(
-                    @"UPDATE [dbo].[Wallets]
-                      SET    [StockQuantity] = [StockQuantity] - @Qty
-                      WHERE  [Id] = @Id", conn);
+                string deductSql = @"
+                    UPDATE [dbo].[Wallets]
+                    SET    [StockQuantity] = [StockQuantity] - @Qty
+                    WHERE  [Id] = @Id";
+
+                SqlCommand cmd = new SqlCommand(deductSql, conn);
 
                 cmd.Parameters.AddWithValue("@Qty", qty);
                 cmd.Parameters.AddWithValue("@Id",  wallet.Id);
