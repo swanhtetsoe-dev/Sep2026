@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Sep2026.WalletShop
 {
-    public class WalletService
+    public class WalletService : IWalletService
     {
         public List<WalletDto> GetAllWallets()
         {

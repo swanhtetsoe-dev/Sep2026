@@ -3,11 +3,11 @@ using System.Data;
 
 namespace Sep2026.WalletShop
 {
-    public class SaleService
+    public class SaleService : ISaleService
     {
-        private readonly WalletService _walletService;
+        private readonly IWalletService _walletService;
 
-        public SaleService(WalletService walletService)
+        public SaleService(IWalletService walletService)
         {
             _walletService = walletService;
         }

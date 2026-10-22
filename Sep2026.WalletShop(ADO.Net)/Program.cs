@@ -1,7 +1,7 @@
 ﻿using Sep2026.WalletShop;
 
-WalletService walletService = new WalletService();
-SaleService   saleService   = new SaleService(walletService);
+IWalletService walletService = new WalletService();
+ISaleService   saleService   = new SaleService(walletService);
 
 Start:
 
