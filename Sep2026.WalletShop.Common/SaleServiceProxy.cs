@@ -2,18 +2,22 @@ namespace Sep2026.WalletShop
 {
     public class SaleServiceProxy : ISaleService
     {
-        private readonly ISaleService _inner;
+        private readonly ISaleService   _inner;
+        private readonly IWalletService _walletService;
 
-        public SaleServiceProxy(ISaleService inner)
+        public SaleServiceProxy(ISaleService inner, IWalletService walletService)
         {
-            _inner = inner;
+            _inner         = inner;
+            _walletService = walletService;
         }
 
         public void SellWallet(WalletDto wallet, int qty)
         {
+            if (!_walletService.DeductStock(wallet, qty))
+                return;
+
             try
             {
-                int stockBefore = wallet.StockQuantity;
                 _inner.SellWallet(wallet, qty);
 
                 decimal totalAmount = wallet.CalculateTotalAmount(qty);

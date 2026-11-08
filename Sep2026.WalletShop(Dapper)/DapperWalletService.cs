@@ -73,7 +73,7 @@ namespace Sep2026.WalletShop
 
         public bool DeductStock(WalletDto wallet, int qty)
         {
-            if (wallet.StockQuantity <= 0 || wallet.StockQuantity < qty)
+            if (!wallet.HasSufficientStock(qty))
                 return false;
 
             using var conn = DbHelper.GetOpenConnection();

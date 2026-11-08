@@ -4,20 +4,15 @@ namespace Sep2026.WalletShop
 {
     public class SaleService : ISaleService
     {
-        private readonly IWalletService _walletService;
-        private readonly AppDbContext   _db;
+        private readonly AppDbContext _db;
 
-        public SaleService(IWalletService walletService, AppDbContext db)
+        public SaleService(AppDbContext db)
         {
-            _walletService = walletService;
-            _db            = db;
+            _db = db;
         }
 
         public void SellWallet(WalletDto wallet, int qty)
         {
-            if (!_walletService.DeductStock(wallet, qty))
-                return;
-
             decimal totalAmount = wallet.CalculateTotalAmount(qty);
 
             Sale sale = new Sale

@@ -13,5 +13,7 @@ namespace Sep2026.WalletShop
         public bool IsDeleted { get; set; }
 
         public decimal CalculateTotalAmount(int qty) => Price * qty;
+
+        public bool HasSufficientStock(int qty) => StockQuantity > 0 && StockQuantity >= qty;
     }
 }

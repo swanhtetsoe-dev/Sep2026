@@ -4,18 +4,8 @@ namespace Sep2026.WalletShop
 {
     public class DapperSaleService : ISaleService
     {
-        private readonly IWalletService _walletService;
-
-        public DapperSaleService(IWalletService walletService)
-        {
-            _walletService = walletService;
-        }
-
         public void SellWallet(WalletDto wallet, int qty)
         {
-            if (!_walletService.DeductStock(wallet, qty))
-                return;
-
             decimal totalAmount = wallet.CalculateTotalAmount(qty);
 
             using var conn = DbHelper.GetOpenConnection();
