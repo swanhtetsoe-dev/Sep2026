@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Sep2026.Database.Models;
 
 namespace Sep2026.WalletShop
@@ -21,55 +20,40 @@ namespace Sep2026.WalletShop
 
             decimal totalAmount = wallet.CalculateTotalAmount(qty);
 
-            try
+            Sale sale = new Sale
             {
-                Sale sale = new Sale
+                WalletId    = wallet.Id,
+                ProductCode = wallet.ProductCode,
+                WalletName  = wallet.Name,
+                SoldQty     = qty,
+                TotalAmount = totalAmount,
+                SaleDate    = DateTime.Now
+            };
+
+            _db.Sales.Add(sale);
+            _db.SaveChanges();
+        }
+
+        public List<SaleDto> GetSalesReport()
+        {
+            return _db.Sales
+                .OrderBy(s => s.SaleId)
+                .Select(s => new SaleDto
                 {
-                    WalletId    = wallet.Id,
-                    ProductCode = wallet.ProductCode,
-                    WalletName  = wallet.Name,
-                    SoldQty     = qty,
-                    TotalAmount = totalAmount,
-                    SaleDate    = DateTime.Now
-                };
-
-                _db.Sales.Add(sale);
-                _db.SaveChanges();
-
-                Console.WriteLine(
-                    $"Sale successful! {qty} x {wallet.Name} ({wallet.ProductCode}) = " +
-                    $"{totalAmount.ToCurrency()}. Remaining stock: {wallet.StockQuantity}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+                    SaleId      = s.SaleId,
+                    WalletId    = s.WalletId,
+                    ProductCode = s.ProductCode,
+                    WalletName  = s.WalletName,
+                    SoldQty     = s.SoldQty,
+                    TotalAmount = s.TotalAmount,
+                    SaleDate    = s.SaleDate
+                })
+                .ToList();
         }
 
         public void ShowSalesReport()
         {
-            List<SaleDto> sales = new List<SaleDto>();
-
-            try
-            {
-                sales = _db.Sales
-                    .OrderBy(s => s.SaleId)
-                    .Select(s => new SaleDto
-                    {
-                        SaleId      = s.SaleId,
-                        WalletId    = s.WalletId,
-                        ProductCode = s.ProductCode,
-                        WalletName  = s.WalletName,
-                        SoldQty     = s.SoldQty,
-                        TotalAmount = s.TotalAmount,
-                        SaleDate    = s.SaleDate
-                    })
-                    .ToList();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+            List<SaleDto> sales = GetSalesReport();
 
             if (sales.Count == 0)
             {

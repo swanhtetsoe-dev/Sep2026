@@ -20,46 +20,52 @@ namespace Sep2026.WalletShop
             decimal totalAmount = wallet.CalculateTotalAmount(qty);
 
             using var conn = DbHelper.GetOpenConnection();
-            try
+
+            SqlCommand cmd = new SqlCommand(SaleQueries.Insert, conn);
+
+            cmd.Parameters.AddWithValue("@WalletId",    wallet.Id);
+            cmd.Parameters.AddWithValue("@ProductCode", wallet.ProductCode);
+            cmd.Parameters.AddWithValue("@WalletName",  wallet.Name);
+            cmd.Parameters.AddWithValue("@SoldQty",     qty);
+            cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
+            cmd.Parameters.AddWithValue("@SaleDate",    DateTime.Now);
+
+            cmd.ExecuteNonQuery();
+        }
+
+        public List<SaleDto> GetSalesReport()
+        {
+            List<SaleDto> sales = new List<SaleDto>();
+
+            DataTable dt = new DataTable();
+            using var conn = DbHelper.GetOpenConnection();
+
+            SqlCommand cmd = new SqlCommand(SaleQueries.SelectAll, conn);
+
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            adapter.Fill(dt);
+
+            foreach (DataRow row in dt.Rows)
             {
-                SqlCommand cmd = new SqlCommand(SaleQueries.Insert, conn);
-
-                cmd.Parameters.AddWithValue("@WalletId",    wallet.Id);
-                cmd.Parameters.AddWithValue("@ProductCode", wallet.ProductCode);
-                cmd.Parameters.AddWithValue("@WalletName",  wallet.Name);
-                cmd.Parameters.AddWithValue("@SoldQty",     qty);
-                cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
-                cmd.Parameters.AddWithValue("@SaleDate",    DateTime.Now);
-
-                cmd.ExecuteNonQuery();
-
-                Console.WriteLine(
-                    $"Sale successful! {qty} x {wallet.Name} ({wallet.ProductCode}) = " +
-                    $"{totalAmount.ToCurrency()}. Remaining stock: {wallet.StockQuantity}");
+                sales.Add(new SaleDto
+                {
+                    SaleId      = Convert.ToInt32(row["SaleId"]),
+                    ProductCode = row["ProductCode"].ToString()!,
+                    WalletName  = row["WalletName"].ToString()!,
+                    SoldQty     = Convert.ToInt32(row["SoldQty"]),
+                    TotalAmount = Convert.ToDecimal(row["TotalAmount"]),
+                    SaleDate    = Convert.ToDateTime(row["SaleDate"])
+                });
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+
+            return sales;
         }
 
         public void ShowSalesReport()
         {
-            DataTable dt = new DataTable();
-            using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                SqlCommand cmd = new SqlCommand(SaleQueries.SelectAll, conn);
+            List<SaleDto> sales = GetSalesReport();
 
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                adapter.Fill(dt);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-
-            if (dt.Rows.Count == 0)
+            if (sales.Count == 0)
             {
                 Console.WriteLine("No sales records found.");
                 return;
@@ -68,23 +74,16 @@ namespace Sep2026.WalletShop
             Console.WriteLine("\n========== Sales Report ==========");
 
             decimal grandTotal = 0m;
-            foreach (DataRow row in dt.Rows)
+            foreach (SaleDto sale in sales)
             {
-                int      saleId      = Convert.ToInt32(row["SaleId"]);
-                string   productCode = row["ProductCode"].ToString()!;
-                string   walletName  = row["WalletName"].ToString()!;
-                int      soldQty     = Convert.ToInt32(row["SoldQty"]);
-                decimal  totalAmount = Convert.ToDecimal(row["TotalAmount"]);
-                DateTime saleDate    = Convert.ToDateTime(row["SaleDate"]);
-
-                grandTotal += totalAmount;
+                grandTotal += sale.TotalAmount;
 
                 Console.WriteLine($"""
-                    Sale ID : {saleId}
-                      Product  : [{productCode}] {walletName}
-                      Qty Sold : {soldQty}
-                      Amount   : {totalAmount.ToCurrency()}
-                      Date     : {saleDate:yyyy-MM-dd HH:mm}
+                    Sale ID : {sale.SaleId}
+                      Product  : [{sale.ProductCode}] {sale.WalletName}
+                      Qty Sold : {sale.SoldQty}
+                      Amount   : {sale.TotalAmount.ToCurrency()}
+                      Date     : {sale.SaleDate:yyyy-MM-dd HH:mm}
                       ----------------------------------
                     """);
             }

@@ -11,17 +11,11 @@ namespace Sep2026.WalletShop
 
             DataTable dt = new DataTable();
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                SqlCommand cmd = new SqlCommand(WalletQueries.SelectAll, conn);
 
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                adapter.Fill(dt);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+            SqlCommand cmd = new SqlCommand(WalletQueries.SelectAll, conn);
+
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            adapter.Fill(dt);
 
             foreach (DataRow row in dt.Rows)
             {
@@ -34,129 +28,90 @@ namespace Sep2026.WalletShop
         public void AddWallet(WalletCreateDto wallet)
         {
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                SqlCommand getMaxId = new SqlCommand(WalletQueries.GetMaxId, conn);
-                int newId = Convert.ToInt32(getMaxId.ExecuteScalar()) + 1;
 
-                string productCode = $"WAL-{newId:D4}";
+            SqlCommand getMaxId = new SqlCommand(WalletQueries.GetMaxId, conn);
+            int newId = Convert.ToInt32(getMaxId.ExecuteScalar()) + 1;
 
-                SqlCommand cmd = new SqlCommand(WalletQueries.Insert, conn);
+            string productCode = $"WAL-{newId:D4}";
 
-                cmd.Parameters.AddWithValue("@ProductCode",   productCode);
-                cmd.Parameters.AddWithValue("@Name",          wallet.Name);
-                cmd.Parameters.AddWithValue("@Brand",         wallet.Brand);
-                cmd.Parameters.AddWithValue("@Gender",        (byte)wallet.Gender);
-                cmd.Parameters.AddWithValue("@Color",         wallet.Color);
-                cmd.Parameters.AddWithValue("@Price",         wallet.Price);
-                cmd.Parameters.AddWithValue("@StockQuantity", wallet.StockQuantity);
+            SqlCommand cmd = new SqlCommand(WalletQueries.Insert, conn);
 
-                cmd.ExecuteNonQuery();
+            cmd.Parameters.AddWithValue("@ProductCode",   productCode);
+            cmd.Parameters.AddWithValue("@Name",          wallet.Name);
+            cmd.Parameters.AddWithValue("@Brand",         wallet.Brand);
+            cmd.Parameters.AddWithValue("@Gender",        (byte)wallet.Gender);
+            cmd.Parameters.AddWithValue("@Color",         wallet.Color);
+            cmd.Parameters.AddWithValue("@Price",         wallet.Price);
+            cmd.Parameters.AddWithValue("@StockQuantity", wallet.StockQuantity);
 
-                Console.WriteLine($"Wallet added successfully. Product Code: {productCode}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+            cmd.ExecuteNonQuery();
         }
 
         public WalletDto? FindWallet(string nameOrCode)
         {
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                SqlCommand cmd = new SqlCommand(WalletQueries.FindByNameOrCode, conn);
 
-                cmd.Parameters.AddWithValue("@Search", $"%{nameOrCode}%");
+            SqlCommand cmd = new SqlCommand(WalletQueries.FindByNameOrCode, conn);
+            cmd.Parameters.AddWithValue("@Search", $"%{nameOrCode}%");
 
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
 
-                if (dt.Rows.Count == 0)
-                    return null;
-
-                return MapRow(dt.Rows[0]);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
+            if (dt.Rows.Count == 0)
                 return null;
-            }
+
+            return MapRow(dt.Rows[0]);
         }
 
         public void EditWallet(WalletEditDto wallet)
         {
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                SqlCommand cmd = new SqlCommand(WalletQueries.Update, conn);
 
-                cmd.Parameters.AddWithValue("@Name",          wallet.Name);
-                cmd.Parameters.AddWithValue("@Brand",         wallet.Brand);
-                cmd.Parameters.AddWithValue("@Gender",        (byte)wallet.Gender);
-                cmd.Parameters.AddWithValue("@Color",         wallet.Color);
-                cmd.Parameters.AddWithValue("@Price",         wallet.Price);
-                cmd.Parameters.AddWithValue("@StockQuantity", wallet.StockQuantity);
-                cmd.Parameters.AddWithValue("@Id",            wallet.Id);
+            SqlCommand cmd = new SqlCommand(WalletQueries.Update, conn);
 
-                cmd.ExecuteNonQuery();
+            cmd.Parameters.AddWithValue("@Name",          wallet.Name);
+            cmd.Parameters.AddWithValue("@Brand",         wallet.Brand);
+            cmd.Parameters.AddWithValue("@Gender",        (byte)wallet.Gender);
+            cmd.Parameters.AddWithValue("@Color",         wallet.Color);
+            cmd.Parameters.AddWithValue("@Price",         wallet.Price);
+            cmd.Parameters.AddWithValue("@StockQuantity", wallet.StockQuantity);
+            cmd.Parameters.AddWithValue("@Id",            wallet.Id);
 
-                Console.WriteLine("Wallet updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+            int rows = cmd.ExecuteNonQuery();
+
+            if (rows == 0)
+                throw new InvalidOperationException("Wallet not found.");
         }
 
         public void DeleteWallet(int id)
         {
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                SqlCommand cmd = new SqlCommand(WalletQueries.SoftDelete, conn);
 
-                cmd.Parameters.AddWithValue("@Id", id);
+            SqlCommand cmd = new SqlCommand(WalletQueries.SoftDelete, conn);
+            cmd.Parameters.AddWithValue("@Id", id);
 
-                cmd.ExecuteNonQuery();
+            int rows = cmd.ExecuteNonQuery();
 
-                Console.WriteLine("Wallet deleted successfully.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+            if (rows == 0)
+                throw new InvalidOperationException("Wallet not found.");
         }
 
         public bool DeductStock(WalletDto wallet, int qty)
         {
-            if (!HasSufficientStock(wallet, qty))
-            {
-                Console.WriteLine(
-                    $"Out of stock or insufficient stock. Available stock: {wallet.StockQuantity}");
+            if (wallet.StockQuantity <= 0 || wallet.StockQuantity < qty)
                 return false;
-            }
 
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                SqlCommand cmd = new SqlCommand(WalletQueries.DeductStock, conn);
 
-                cmd.Parameters.AddWithValue("@Qty", qty);
-                cmd.Parameters.AddWithValue("@Id",  wallet.Id);
+            SqlCommand cmd = new SqlCommand(WalletQueries.DeductStock, conn);
+            cmd.Parameters.AddWithValue("@Qty", qty);
+            cmd.Parameters.AddWithValue("@Id",  wallet.Id);
 
-                cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();
 
-                wallet.StockQuantity -= qty;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                return false;
-            }
+            wallet.StockQuantity -= qty;
+            return true;
         }
 
         public void ShowWallets()

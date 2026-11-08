@@ -1,6 +1,4 @@
 using Dapper;
-using Microsoft.Data.SqlClient;
-using System.Data;
 
 namespace Sep2026.WalletShop
 {
@@ -21,43 +19,29 @@ namespace Sep2026.WalletShop
             decimal totalAmount = wallet.CalculateTotalAmount(qty);
 
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                var param = new
-                {
-                    WalletId    = wallet.Id,
-                    ProductCode = wallet.ProductCode,
-                    WalletName  = wallet.Name,
-                    SoldQty     = qty,
-                    TotalAmount = totalAmount,
-                    SaleDate    = DateTime.Now
-                };
 
-                conn.Execute(SaleQueries.Insert, param);
-
-                Console.WriteLine(
-                    $"Sale successful! {qty} x {wallet.Name} ({wallet.ProductCode}) = " +
-                    $"{totalAmount.ToCurrency()}. Remaining stock: {wallet.StockQuantity}");
-            }
-            catch (Exception ex)
+            var param = new
             {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+                WalletId    = wallet.Id,
+                ProductCode = wallet.ProductCode,
+                WalletName  = wallet.Name,
+                SoldQty     = qty,
+                TotalAmount = totalAmount,
+                SaleDate    = DateTime.Now
+            };
+
+            conn.Execute(SaleQueries.Insert, param);
+        }
+
+        public List<SaleDto> GetSalesReport()
+        {
+            using var conn = DbHelper.GetOpenConnection();
+            return conn.Query<SaleDto>(SaleQueries.SelectAll).ToList();
         }
 
         public void ShowSalesReport()
         {
-            List<SaleDto> sales = new List<SaleDto>();
-
-            using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                sales = conn.Query<SaleDto>(SaleQueries.SelectAll).ToList();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+            List<SaleDto> sales = GetSalesReport();
 
             if (sales.Count == 0)
             {

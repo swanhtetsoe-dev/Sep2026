@@ -1,6 +1,4 @@
 using Dapper;
-using Microsoft.Data.SqlClient;
-using System.Data;
 
 namespace Sep2026.WalletShop
 {
@@ -8,135 +6,82 @@ namespace Sep2026.WalletShop
     {
         public List<WalletDto> GetAllWallets()
         {
-            List<WalletDto> wallets = new List<WalletDto>();
-
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                wallets = conn.Query<WalletDto>(WalletQueries.SelectAll).ToList();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-
-            return wallets;
+            return conn.Query<WalletDto>(WalletQueries.SelectAll).ToList();
         }
 
         public void AddWallet(WalletCreateDto wallet)
         {
             using var conn = DbHelper.GetOpenConnection();
-            try
+
+            int newId = conn.ExecuteScalar<int>(WalletQueries.GetMaxId) + 1;
+
+            string productCode = $"WAL-{newId:D4}";
+
+            var param = new
             {
-                int maxId = conn.ExecuteScalar<int>(WalletQueries.GetMaxId);
-                int newId = maxId + 1;
+                ProductCode   = productCode,
+                Name          = wallet.Name,
+                Brand         = wallet.Brand,
+                Gender        = (byte)wallet.Gender,
+                Color         = wallet.Color,
+                Price         = wallet.Price,
+                StockQuantity = wallet.StockQuantity
+            };
 
-                string productCode = $"WAL-{newId:D4}";
-
-                var param = new
-                {
-                    ProductCode   = productCode,
-                    Name          = wallet.Name,
-                    Brand         = wallet.Brand,
-                    Gender        = (byte)wallet.Gender,
-                    Color         = wallet.Color,
-                    Price         = wallet.Price,
-                    StockQuantity = wallet.StockQuantity
-                };
-
-                conn.Execute(WalletQueries.Insert, param);
-
-                Console.WriteLine($"Wallet added successfully. Product Code: {productCode}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+            conn.Execute(WalletQueries.Insert, param);
         }
 
         public WalletDto? FindWallet(string nameOrCode)
         {
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                var param = new { Search = $"%{nameOrCode}%" };
 
-                return conn.QueryFirstOrDefault<WalletDto>(WalletQueries.FindByNameOrCode, param);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                return null;
-            }
+            var param = new { Search = $"%{nameOrCode}%" };
+            return conn.QueryFirstOrDefault<WalletDto>(WalletQueries.FindByNameOrCode, param);
         }
 
         public void EditWallet(WalletEditDto wallet)
         {
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                var param = new
-                {
-                    Name          = wallet.Name,
-                    Brand         = wallet.Brand,
-                    Gender        = (byte)wallet.Gender,
-                    Color         = wallet.Color,
-                    Price         = wallet.Price,
-                    StockQuantity = wallet.StockQuantity,
-                    Id            = wallet.Id
-                };
 
-                conn.Execute(WalletQueries.Update, param);
-
-                Console.WriteLine("Wallet updated successfully.");
-            }
-            catch (Exception ex)
+            var param = new
             {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+                Name          = wallet.Name,
+                Brand         = wallet.Brand,
+                Gender        = (byte)wallet.Gender,
+                Color         = wallet.Color,
+                Price         = wallet.Price,
+                StockQuantity = wallet.StockQuantity,
+                Id            = wallet.Id
+            };
+
+            int rows = conn.Execute(WalletQueries.Update, param);
+
+            if (rows == 0)
+                throw new InvalidOperationException("Wallet not found.");
         }
 
         public void DeleteWallet(int id)
         {
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                var param = new { Id = id };
 
-                conn.Execute(WalletQueries.SoftDelete, param);
+            int rows = conn.Execute(WalletQueries.SoftDelete, new { Id = id });
 
-                Console.WriteLine("Wallet deleted successfully.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+            if (rows == 0)
+                throw new InvalidOperationException("Wallet not found.");
         }
 
         public bool DeductStock(WalletDto wallet, int qty)
         {
-            if (!HasSufficientStock(wallet, qty))
-            {
-                Console.WriteLine(
-                    $"Out of stock or insufficient stock. Available stock: {wallet.StockQuantity}");
+            if (wallet.StockQuantity <= 0 || wallet.StockQuantity < qty)
                 return false;
-            }
 
             using var conn = DbHelper.GetOpenConnection();
-            try
-            {
-                var param = new { Qty = qty, Id = wallet.Id };
 
-                conn.Execute(WalletQueries.DeductStock, param);
+            conn.Execute(WalletQueries.DeductStock, new { Qty = qty, Id = wallet.Id });
 
-                wallet.StockQuantity -= qty;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                return false;
-            }
+            wallet.StockQuantity -= qty;
+            return true;
         }
 
         public void ShowWallets()
@@ -159,8 +104,5 @@ namespace Sep2026.WalletShop
             }
             Console.WriteLine("-------------------");
         }
-
-        private static bool HasSufficientStock(WalletDto wallet, int qty)
-            => wallet.StockQuantity > 0 && wallet.StockQuantity >= qty;
     }
 }
