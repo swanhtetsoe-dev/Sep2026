@@ -22,9 +22,13 @@ namespace Oct2026.WindowForm
                     "female" => 2,
                     _ => 3
                 };
+                int maxId = dbContext.Wallets.Any() ? dbContext.Wallets.Max(w => w.Id) : 0;
+                int newId = maxId + 1;
+                string productCode = $"WAL-{newId:D4}";
+
                 dbContext.Wallets.Add(new Wallet
                 {
-                    ProductCode = txtProductCode.Text.Trim(),
+                    ProductCode = productCode,
                     Name = txtName.Text.Trim(),
                     Brand = txtBrand.Text.Trim(),
                     Gender = gender,
@@ -51,7 +55,6 @@ namespace Oct2026.WindowForm
 
         private void ClearBtn()
         {
-            txtProductCode.Clear();
             txtName.Clear();
             txtBrand.Clear();
             txtGender.Clear();
@@ -59,7 +62,7 @@ namespace Oct2026.WindowForm
             txtPrice.Clear();
             txtStockQty.Clear();
 
-            txtProductCode.Focus();
+            txtName.Focus();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

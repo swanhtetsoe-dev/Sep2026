@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             btnSave = new Button();
-            label1 = new Label();
-            txtProductCode = new TextBox();
             txtName = new TextBox();
             txtBrand = new TextBox();
             label3 = new Label();
@@ -49,7 +47,7 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(273, 481);
+            btnSave.Location = new Point(391, 437);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(112, 34);
             btnSave.TabIndex = 0;
@@ -57,32 +55,16 @@
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(190, 51);
-            label1.Name = "label1";
-            label1.Size = new Size(121, 25);
-            label1.TabIndex = 1;
-            label1.Text = "Product Code";
-            // 
-            // txtProductCode
-            // 
-            txtProductCode.Location = new Point(333, 51);
-            txtProductCode.Name = "txtProductCode";
-            txtProductCode.Size = new Size(150, 31);
-            txtProductCode.TabIndex = 2;
-            // 
             // txtName
             // 
-            txtName.Location = new Point(333, 113);
+            txtName.Location = new Point(391, 46);
             txtName.Name = "txtName";
             txtName.Size = new Size(150, 31);
             txtName.TabIndex = 4;
             // 
             // txtBrand
             // 
-            txtBrand.Location = new Point(333, 175);
+            txtBrand.Location = new Point(391, 108);
             txtBrand.Name = "txtBrand";
             txtBrand.Size = new Size(150, 31);
             txtBrand.TabIndex = 6;
@@ -90,7 +72,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(190, 181);
+            label3.Location = new Point(248, 114);
             label3.Name = "label3";
             label3.Size = new Size(58, 25);
             label3.TabIndex = 5;
@@ -99,7 +81,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(190, 119);
+            label4.Location = new Point(248, 52);
             label4.Name = "label4";
             label4.Size = new Size(59, 25);
             label4.TabIndex = 7;
@@ -107,7 +89,7 @@
             // 
             // btnClear
             // 
-            btnClear.Location = new Point(155, 481);
+            btnClear.Location = new Point(509, 437);
             btnClear.Name = "btnClear";
             btnClear.Size = new Size(112, 34);
             btnClear.TabIndex = 8;
@@ -117,7 +99,7 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(391, 481);
+            btnCancel.Location = new Point(273, 437);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(112, 34);
             btnCancel.TabIndex = 9;
@@ -127,7 +109,7 @@
             // 
             // txtGender
             // 
-            txtGender.Location = new Point(333, 235);
+            txtGender.Location = new Point(391, 168);
             txtGender.Name = "txtGender";
             txtGender.Size = new Size(150, 31);
             txtGender.TabIndex = 11;
@@ -135,7 +117,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(190, 238);
+            label2.Location = new Point(248, 171);
             label2.Name = "label2";
             label2.Size = new Size(69, 25);
             label2.TabIndex = 10;
@@ -143,7 +125,7 @@
             // 
             // txtColor
             // 
-            txtColor.Location = new Point(333, 291);
+            txtColor.Location = new Point(391, 224);
             txtColor.Name = "txtColor";
             txtColor.Size = new Size(150, 31);
             txtColor.TabIndex = 13;
@@ -151,7 +133,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(186, 297);
+            label5.Location = new Point(244, 230);
             label5.Name = "label5";
             label5.Size = new Size(55, 25);
             label5.TabIndex = 12;
@@ -159,7 +141,7 @@
             // 
             // txtPrice
             // 
-            txtPrice.Location = new Point(333, 353);
+            txtPrice.Location = new Point(391, 286);
             txtPrice.Name = "txtPrice";
             txtPrice.Size = new Size(150, 31);
             txtPrice.TabIndex = 15;
@@ -167,7 +149,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(190, 356);
+            label6.Location = new Point(248, 289);
             label6.Name = "label6";
             label6.Size = new Size(49, 25);
             label6.TabIndex = 14;
@@ -175,7 +157,7 @@
             // 
             // txtStockQty
             // 
-            txtStockQty.Location = new Point(333, 415);
+            txtStockQty.Location = new Point(391, 348);
             txtStockQty.Name = "txtStockQty";
             txtStockQty.Size = new Size(150, 31);
             txtStockQty.TabIndex = 17;
@@ -183,7 +165,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(190, 415);
+            label7.Location = new Point(248, 348);
             label7.Name = "label7";
             label7.Size = new Size(128, 25);
             label7.TabIndex = 16;
@@ -208,8 +190,6 @@
             Controls.Add(txtBrand);
             Controls.Add(label3);
             Controls.Add(txtName);
-            Controls.Add(txtProductCode);
-            Controls.Add(label1);
             Controls.Add(btnSave);
             Name = "FrmStudent";
             StartPosition = FormStartPosition.CenterScreen;
@@ -221,8 +201,6 @@
         #endregion
 
         private Button btnSave;
-        private Label label1;
-        private TextBox txtProductCode;
         private TextBox txtName;
         private TextBox txtBrand;
         private Label label3;
