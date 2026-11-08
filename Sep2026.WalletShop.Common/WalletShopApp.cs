@@ -21,10 +21,10 @@ namespace Sep2026.WalletShop
 ============================
 1. Add Wallet
 2. Sell Wallet
-3. View Sales Report
-4. Show All Wallets
-5. Edit Wallet
-6. Delete Wallet
+3. Edit Wallet
+4. Delete Wallet
+5. Show All Wallets
+6. View Sales Report
 7. Exit");
             Console.Write("Please select an option: ");
             string option = Console.ReadLine() ?? "";
@@ -46,14 +46,6 @@ namespace Sep2026.WalletShop
                     HandleSellWallet();
                     break;
 
-                case MenuOption.SalesReport:
-                    _saleService.ShowSalesReport();
-                    break;
-
-                case MenuOption.ShowWallets:
-                    _walletService.ShowWallets();
-                    break;
-
                 case MenuOption.EditWallet:
                     HandleEditWallet();
                     _walletService.ShowWallets();
@@ -62,6 +54,14 @@ namespace Sep2026.WalletShop
                 case MenuOption.DeleteWallet:
                     HandleDeleteWallet();
                     _walletService.ShowWallets();
+                    break;
+
+                case MenuOption.ShowWallets:
+                    _walletService.ShowWallets();
+                    break;
+
+                case MenuOption.SalesReport:
+                    _saleService.ShowSalesReport();
                     break;
 
                 case MenuOption.Exit:

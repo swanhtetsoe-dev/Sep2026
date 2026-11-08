@@ -4,10 +4,10 @@ namespace Sep2026.WalletShop
     {
         AddWallet    = 1,
         SellWallet   = 2,
-        SalesReport  = 3,
-        ShowWallets  = 4,
-        EditWallet   = 5,
-        DeleteWallet = 6,
+        EditWallet   = 3,
+        DeleteWallet = 4,
+        ShowWallets  = 5,
+        SalesReport  = 6,
         Exit         = 7
     }
 }
