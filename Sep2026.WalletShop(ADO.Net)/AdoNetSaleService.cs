@@ -3,11 +3,11 @@ using System.Data;
 
 namespace Sep2026.WalletShop
 {
-    public class SaleService : ISaleService
+    public class AdoNetSaleService : ISaleService
     {
         private readonly IWalletService _walletService;
 
-        public SaleService(IWalletService walletService)
+        public AdoNetSaleService(IWalletService walletService)
         {
             _walletService = walletService;
         }
@@ -19,14 +19,10 @@ namespace Sep2026.WalletShop
 
             decimal totalAmount = wallet.CalculateTotalAmount(qty);
 
-            var conn = DbHelper.GetOpenConnection();
+            using var conn = DbHelper.GetOpenConnection();
             try
             {
-                SqlCommand cmd = new SqlCommand(
-                    @"INSERT INTO [dbo].[Sales]
-                        ([WalletId],[ProductCode],[WalletName],[SoldQty],[TotalAmount],[SaleDate])
-                      VALUES
-                        (@WalletId,@ProductCode,@WalletName,@SoldQty,@TotalAmount,@SaleDate)", conn);
+                SqlCommand cmd = new SqlCommand(SaleQueries.Insert, conn);
 
                 cmd.Parameters.AddWithValue("@WalletId",    wallet.Id);
                 cmd.Parameters.AddWithValue("@ProductCode", wallet.ProductCode);
@@ -45,23 +41,15 @@ namespace Sep2026.WalletShop
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
-            finally
-            {
-                conn.Close();
-            }
         }
 
         public void ShowSalesReport()
         {
             DataTable dt = new DataTable();
-            var conn = DbHelper.GetOpenConnection();
+            using var conn = DbHelper.GetOpenConnection();
             try
             {
-                SqlCommand cmd = new SqlCommand(
-                    @"SELECT [SaleId],[WalletId],[ProductCode],[WalletName],
-                             [SoldQty],[TotalAmount],[SaleDate]
-                      FROM   [dbo].[Sales]
-                      ORDER BY [SaleId]", conn);
+                SqlCommand cmd = new SqlCommand(SaleQueries.SelectAll, conn);
 
                 SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                 adapter.Fill(dt);
@@ -69,10 +57,6 @@ namespace Sep2026.WalletShop
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                conn.Close();
             }
 
             if (dt.Rows.Count == 0)
