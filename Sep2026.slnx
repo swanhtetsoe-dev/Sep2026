@@ -1,6 +1,8 @@
 <Solution>
-  <Project Path="Sep2026.WalletShop.Common/Sep2026.WalletShop.Common.csproj" />
+  <Project Path="Sep2026.Database/Sep2026.Database.csproj" Id="e919a592-0330-4465-9bae-b5cfe47f71bd" />
   <Project Path="Sep2026.WalletShop(ADO.Net)/Sep2026.WalletShop(ADO.Net).csproj" Id="6c062b03-c813-4e6c-8660-e7a884b99d71" />
   <Project Path="Sep2026.WalletShop(Dapper)/Sep2026.WalletShop(Dapper).csproj" Id="01543be4-b4dc-4f09-a39a-374263016c82" />
+  <Project Path="Sep2026.WalletShop(EFCore)/Sep2026.WalletShop(EFCore).csproj" Id="84f9122b-3365-410a-9fde-e713e31adf29" />
+  <Project Path="Sep2026.WalletShop.Common/Sep2026.WalletShop.Common.csproj" />
   <Project Path="Sep2026.WalletShopConsoleApp/Sep2026.WalletShopConsoleApp.csproj" />
 </Solution>
