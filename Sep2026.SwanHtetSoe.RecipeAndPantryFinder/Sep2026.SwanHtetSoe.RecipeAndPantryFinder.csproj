@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sep2026.ReceipeDb\Sep2026.ReceipeDb.csproj" />
+    <ProjectReference Include="..\Sep2026.SwanHtetSoe.RecipeAndPantryFinder.database\Sep2026.SwanHtetSoe.RecipeAndPantryFinder.database.csproj" />
   </ItemGroup>
 
 </Project>
