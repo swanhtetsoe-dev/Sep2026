@@ -1,0 +1,6 @@
+@Sep2026.MyanmarNameology_HostAddress = http://localhost:5258
+
+GET {{Sep2026.MyanmarNameology_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
